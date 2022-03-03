@@ -1,6 +1,7 @@
 package com.abc.photo.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
@@ -33,6 +34,7 @@ class BgItem(view: View) : ItemViewHolder<String>(view) {
         image.displayImage(item)
         image.setOnClickListener {
             EventBus.getDefault().post(MessageEvent("bg",item))
+            (context as Activity).finish()
         }
     }
 }

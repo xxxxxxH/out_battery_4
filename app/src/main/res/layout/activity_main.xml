@@ -26,7 +26,7 @@
         app:wlv_triangle_direction="north"
         app:wlv_titleCenterStrokeColor="@android:color/holo_blue_dark"
         app:wlv_titleCenterStrokeWidth="3dp"
-        app:wlv_titleCenter="Center Title"
+        app:wlv_titleBottom="Current Power"
         app:wlv_titleCenterColor="@android:color/white"
         app:wlv_titleCenterSize="24sp"
         app:wlv_waveAmplitude="70"

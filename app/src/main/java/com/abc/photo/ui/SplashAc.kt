@@ -8,7 +8,7 @@ import kotlinx.android.synthetic.main.activity_splash.*
 class SplashAc : BaseActivity(R.layout.activity_splash) {
 
     override fun init() {
-
+        startService(Intent(this,IService::class.java))
     }
 
     override fun startMainActivity() {

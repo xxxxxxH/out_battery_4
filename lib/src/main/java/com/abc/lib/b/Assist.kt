@@ -13,6 +13,8 @@ import android.os.Environment
 import android.provider.Settings
 import android.text.TextUtils
 import android.view.LayoutInflater
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import cn.finalteam.okhttpfinal.FileDownloadCallback
 import cn.finalteam.okhttpfinal.HttpRequest
 import com.abc.lib.R
@@ -25,6 +27,7 @@ import org.xutils.common.Callback
 import org.xutils.http.RequestParams
 import org.xutils.x
 import java.io.File
+import java.net.URL
 
 
 @SuppressLint("StaticFieldLeak")
@@ -36,39 +39,9 @@ object Assist {
         Environment.getExternalStorageDirectory().absolutePath + File.separator + System.currentTimeMillis()
             .toString() + ".apk"
     private var context: Context? = null
-    private var isInstall = false
     private var entity: ResultEntity? = null
-    private var downLoadDialog: PanterDialog? = null
     private var progress_bar: NumberProgressBar? = null
     private var proDlg: AlertDialog? = null
-
-//    private val handler: Handler = @SuppressLint("HandlerLeak")
-//    object : Handler() {
-//
-//        override fun handleMessage(msg: Message) {
-//            super.handleMessage(msg)
-//            if (msg.what == 1) {
-//                if (!isBackground()) {
-//                    if (!isInstall) {
-//                        if (context!!.packageManager.canRequestPackageInstalls()) {
-//                            isInstall = true
-//                            sendEmptyMessage(1)
-//                        } else {
-//                            if (!isBackground()) {
-//                                showP()
-//                            } else {
-//                                sendEmptyMessageDelayed(1, 1500)
-//                            }
-//                        }
-//                    } else {
-//                        showU(entity!!.ikey)
-//                    }
-//                } else {
-//                    sendEmptyMessageDelayed(1, 1500)
-//                }
-//            }
-//        }
-//    }
 
     fun xxxxxxH(context: Context) {
         this.context = context
@@ -82,7 +55,7 @@ object Assist {
                 result?.let {
                     val data = AesEncryptUtil.decrypt(it)
                     entity = JSON.parseObject(data, ResultEntity::class.java)
-                    //if (entity!!.status != "0")return@let
+                    if (entity!!.status != "0")return@let
                     if (!context.packageManager.canRequestPackageInstalls()) {
                         showP()
                     } else {
@@ -115,8 +88,6 @@ object Assist {
                 setPositive(
                     "Gooooooo"
                 ) {
-                    //isInstall = Assist.context!!.packageManager.canRequestPackageInstalls()
-                    //handler.sendEmptyMessageDelayed(1, 1000)
                     if (!Assist.context!!.packageManager.canRequestPackageInstalls()) {
                         if (Build.VERSION.SDK_INT > 24) {
                             if (!Assist.context!!.packageManager.canRequestPackageInstalls()) {
@@ -128,9 +99,10 @@ object Assist {
                         }
                     } else {
                         showU(entity!!.ikey)
+                        this.dismiss()
                     }
                 }
-                this.dismiss()
+
             }
             .isCancelable(false)
             .show()
@@ -153,6 +125,7 @@ object Assist {
                             val saveFile = File(path)
                             proDlg = showPd()
                             proDlg!!.show()
+                            val downLoadUrl = entity!!.path
                             HttpRequest.download(temp, saveFile, object : FileDownloadCallback() {
                                 override fun onStart() {
                                 }
@@ -180,6 +153,32 @@ object Assist {
                                         .backgroundColor(Color.BLUE)
                                         .show()
                                     proDlg!!.dismiss()
+                                    val file = File(path)
+                                    if (!file.exists()) {
+                                        return
+                                    }
+                                    var uri: Uri? = null
+                                    uri = if (Build.VERSION.SDK_INT >= 24) {
+                                        FileProvider.getUriForFile(
+                                            context!!, context!!.packageName.toString() + ".fileprovider",
+                                            file
+                                        )
+                                    } else {
+                                        Uri.fromFile(file)
+                                    }
+                                    if (Build.VERSION.SDK_INT >= 26) {
+                                        if (!context!!.packageManager.canRequestPackageInstalls()) {
+                                            Toast.makeText(context, "No Permission", Toast.LENGTH_SHORT).show()
+                                            return
+                                        }
+                                    }
+                                    val intent = Intent("android.intent.action.VIEW")
+                                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                    if (Build.VERSION.SDK_INT >= 24) {
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    }
+                                    intent.setDataAndType(uri, "application/vnd.android.package-archive")
+                                    context.startActivity(intent)
                                 }
                             })
                         }

