@@ -1,8 +1,11 @@
 package com.abc.lib.b
 
 import android.app.Application
+import cn.finalteam.okhttpfinal.OkHttpFinal
+import cn.finalteam.okhttpfinal.OkHttpFinalConfiguration
 import com.tencent.mmkv.MMKV
 import org.xutils.x
+
 
 abstract class BaseApplication : Application() {
 
@@ -16,6 +19,8 @@ abstract class BaseApplication : Application() {
         instance = this
         MMKV.initialize(this)
         x.Ext.init(this)
+        val builder = OkHttpFinalConfiguration.Builder()
+        OkHttpFinal.getInstance().init(builder.build())
     }
 
     abstract fun getAppId(): String

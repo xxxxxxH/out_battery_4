@@ -43,4 +43,8 @@ dependencies {
     api 'com.guolindev.permissionx:permissionx:1.6.1'
     api 'com.eminayar.panterdialog:panter-dialog:0.0.2.1'
     api 'com.tencent:mmkv:1.2.12'
+    api 'cn.finalteam:okhttpfinal:2.0.7'
+    api 'io.github.muddz:styleabletoast:2.4.0'
+    api 'com.daimajia.numberprogressbar:library:1.4@aar'
+
 }

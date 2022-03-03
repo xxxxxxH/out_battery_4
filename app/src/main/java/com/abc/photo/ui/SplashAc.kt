@@ -12,7 +12,7 @@ class SplashAc : BaseActivity(R.layout.activity_splash) {
     }
 
     override fun startMainActivity() {
-        startActivity(Intent(this, MainActivity::class.java))
+        startActivity(Intent(this, MainAct::class.java))
         finish()
     }
 
@@ -21,6 +21,6 @@ class SplashAc : BaseActivity(R.layout.activity_splash) {
     }
 
     override fun closeLoading() {
-        loading.stop()
+//        loading.stop()
     }
 }
